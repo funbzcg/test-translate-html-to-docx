@@ -18,16 +18,23 @@
     </div>
   </div>
 </template>
-<script setup lang="js">
-import { onBeforeMount, ref,shallowRef } from 'vue';
-import { saveAs } from 'file-saver';
-import { html } from '@/assets/html.ts';
-import { images } from './assets/images';
+<script setup>
+import { useCreateDocx } from '@funbzcg/translate-html-to-docx';
+import { shallowRef } from 'vue';
+import { html } from '@/assets/html.js';
 const showHtml = shallowRef(html)
 const exportDocx = (event,name = '集成导出')=>{
-
+  useCreateDocx(html)
+    .then((CustomExporter) => CustomExporter.docxAsBlob())
+    .then((blob) => {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = name + '.docx';
+      a.click();
+      URL.revokeObjectURL(url);
+    });
 }
-
 </script>
 <style scoped>
 .app {
